@@ -4,4 +4,4 @@ Execution Flow:
 - `cat output.txt`
 
 Or Simply:
-- `execute.sh`
+- `./execute.sh`
