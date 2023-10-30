@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 
     //1st Child Operation --> Making the payload ready to create prog.o
     if (p1 == 0){
-        printf("Process %d runs: gcc -c %s -o %s \n", pid(), program_name, object_module_name);
+        printf("Process %d runs: gcc -c %s -o %s \n", getpid(), program_name, object_module_name);
         err = execlp("gcc", "gcc", "-c", program_name, "-o", object_module_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
 
     //2nd Child Operation --> Making the payload ready to compile prog.o into an executable
     if (p2 == 0){
-        printf("Process %d runs: gcc %s -o %s \n", pid(), object_module_name, file_name);
+        printf("Process %d runs: gcc %s -o %s \n", getpid(), object_module_name, file_name);
         err = execlp("gcc", "gcc", object_module_name, "-o", file_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
     //The Excepted result is : a text file with a success message
     // This proof of concept is useful because it show a concreat proof of the successed operation
     if (p3 == 0){
-        printf("Process %d runs: ./%s \n", pid(), file_name);
+        printf("Process %d runs: ./%s \n", getpid(), file_name);
         err = execlp(execution_name, file_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
@@ -84,14 +84,14 @@ int main(int argc, char *argv[]){
     // The conditional bloc is added to check whether it is terminated with success or failure
     if(WIFEXITED(status)){
         if(WEXITSTATUS(status) == 0)
-            printf("Process %d exited with no errors! \n", pid());
+            printf("Process %d exited with no errors! \n", getpid());
         else
-            printf("Process %d exited with status: %d \n", pid(), WEXITSTATUS(status));
+            printf("Process %d exited with status: %d \n", getpid(), WEXITSTATUS(status));
     }
 
     // WIFESIGNLED : the macro checking the overflow (debordement) flag
     if(WIFSIGNALED(status)){
-        printf("Process %d exited with signal number: %d \n", pid(), WTERMSIG(status));
+        printf("Process %d exited with signal number: %d \n", getpid(), WTERMSIG(status));
     }
 
     // TO NOT DELETE : KEEPS THE PARENT PROCESS ON HOLD UNTIL THE TERMINATION OF ITS SONS
