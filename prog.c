@@ -7,4 +7,8 @@ int main(){
     fp = fopen("output.txt", "w");
     fprintf(fp, "Process run successfully!");
     fclose(fp);
+
+    printf("Process run successfully!\n");
+
+    return 0;
 }

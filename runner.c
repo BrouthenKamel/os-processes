@@ -8,10 +8,9 @@
 
 #define FILE_NAME_SIZE 64
 
-
 int main(int argc, char *argv[]){
     // Processes states and errors variables
-    int p, p1, p2, p3, err, status;
+    int p1, p2, p3, err, status;
 
     // Commands variables
     char file_name[FILE_NAME_SIZE] = "" ;
@@ -38,11 +37,11 @@ int main(int argc, char *argv[]){
     /** Creating processes **/
 
     // 1st Child Creation 
-    p = fork();
+    p1 = fork();
 
     //1st Child Operation --> Making the payload ready to create prog.o
-    if (p == 0){
-        printf("Process runs: gcc -c %s -o %s \n", program_name, object_module_name);
+    if (p1 == 0){
+        printf("Process %d runs: gcc -c %s -o %s \n", pid(), program_name, object_module_name);
         err = execlp("gcc", "gcc", "-c", program_name, "-o", object_module_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
@@ -52,26 +51,27 @@ int main(int argc, char *argv[]){
     p1 = wait(NULL);
 
     // 2nd Child Creation 
-    p = fork();
+    p2 = fork();
 
     //2nd Child Operation --> Making the payload ready to compile prog.o into an executable
-    if (p == 0){
-        printf("Process runs: gcc %s -o %s \n", object_module_name, file_name);
+    if (p2 == 0){
+        printf("Process %d runs: gcc %s -o %s \n", pid(), object_module_name, file_name);
         err = execlp("gcc", "gcc", object_module_name, "-o", file_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
     }
-// Waiting for the completation of the 1st process without errors
+
+    // Waiting for the completation of the 1st process without errors
     p2 = wait(NULL);
 
     // 3rd Child Creation 
-    p = fork();
+    p3 = fork();
 
     // 3rd Child Operation --> setting the 3rd Process to execute the compiled program
     //The Excepted result is : a text file with a success message
     // This proof of concept is useful because it show a concreat proof of the successed operation
-    if (p == 0){
-        printf("Process runs: ./%s \n", file_name);
+    if (p3 == 0){
+        printf("Process %d runs: ./%s \n", pid(), file_name);
         err = execlp(execution_name, file_name, NULL);
         printf("Execution Error with code: %d \n", err);
         exit(err);
@@ -84,14 +84,14 @@ int main(int argc, char *argv[]){
     // The conditional bloc is added to check whether it is terminated with success or failure
     if(WIFEXITED(status)){
         if(WEXITSTATUS(status) == 0)
-            printf("Process exited with no errors! \n");
+            printf("Process %d exited with no errors! \n", pid());
         else
-            printf("Process exited with status: %d \n", WEXITSTATUS(status));
+            printf("Process %d exited with status: %d \n", pid(), WEXITSTATUS(status));
     }
 
     // WIFESIGNLED : the macro checking the overflow (debordement) flag
     if(WIFSIGNALED(status)){
-        printf("Process exited with signal number: %d \n", WTERMSIG(status));
+        printf("Process %d exited with signal number: %d \n", pid(), WTERMSIG(status));
     }
 
     // TO NOT DELETE : KEEPS THE PARENT PROCESS ON HOLD UNTIL THE TERMINATION OF ITS SONS
