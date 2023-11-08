@@ -51,6 +51,8 @@ int main(int argc, char *argv[]){
 
     printf("Input file: %s \n", argv[1]);
 
+    printf("[PROCESS %d] Root process \n", getpid());
+
 
     /**  Creating processes **/
 
@@ -67,15 +69,15 @@ int main(int argc, char *argv[]){
 
     // Waiting for the completation of the 1st process without errors
     // ! This conditional statement treats the compilation errors
-    p1 = wait(&status);
+    wait(&status);
 
     if(WIFEXITED(status)){
         if(WEXITSTATUS(status) == 0) {
-            printf("[PROCESS %d] exited with no errors! \n", getpid());
+            printf("[PROCESS %d] exited with no errors! \n", p1);
             }
         else 
         {
-            printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+            printf("[PROCESS %d] exited with status: %d \n", p1, WEXITSTATUS(status));
             exit(1);
         }
     }
@@ -94,15 +96,15 @@ int main(int argc, char *argv[]){
 
     // Waiting for the completation of the 2nd process without errors
     //! This conditional statement treats the execution errors
-    p2 = wait(&status);
+    wait(&status);
     
     if(WIFEXITED(status)){
         if(WEXITSTATUS(status) == 0) {
-            printf("[PROCESS %d] exited with no errors! \n", getpid());
+            printf("[PROCESS %d] exited with no errors! \n", p2);
         }
         else
         {
-            printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+            printf("[PROCESS %d] exited with status: %d \n", p2, WEXITSTATUS(status));
             exit(WEXITSTATUS(status));
         }
     }
@@ -121,20 +123,20 @@ int main(int argc, char *argv[]){
     }
 
     //Getting the status to use in the in step 4 (macro analysis)
-    p3 = wait(&status);
+    wait(&status);
 
     // WIFEXITED : the macro verifying the normal termination of the process
     // The conditional bloc is added to check whether it is terminated with success or failure
     if(WIFEXITED(status)){
         if(WEXITSTATUS(status) == 0)
-            printf("[PROCESS %d] exited with no errors! \n", getpid());
+            printf("[PROCESS %d] exited with no errors! \n", p3);
         else
-            printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+            printf("[PROCESS %d] exited with status: %d \n", p3, WEXITSTATUS(status));
     }
 
     // WIFESIGNLED : the macro checking the overflow (debordement) flag
     if(WIFSIGNALED(status)){
-        printf("[PROCESS %d] exited with signal number: %d \n", getpid(), WTERMSIG(status));
+        printf("[PROCESS %d] exited with signal number: %d \n", p3, WTERMSIG(status));
     }
 
     // TO NOT DELETE : KEEPS THE PARENT PROCESS ON HOLD UNTIL THE TERMINATION OF ITS SONS
