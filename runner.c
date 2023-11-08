@@ -70,14 +70,14 @@ int main(int argc, char *argv[]){
     p1 = wait(&status);
 
     if(WIFEXITED(status)){
-    if(WEXITSTATUS(status) == 0) {
-        printf("[PROCESS %d] exited with no errors! \n", getpid());
-    }
-    else 
-    {
-        printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
-        exit(1);
-    }
+        if(WEXITSTATUS(status) == 0) {
+            printf("[PROCESS %d] exited with no errors! \n", getpid());
+            }
+        else 
+        {
+            printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+            exit(1);
+        }
     }
 
 
@@ -97,12 +97,13 @@ int main(int argc, char *argv[]){
     p2 = wait(&status);
     
     if(WIFEXITED(status)){
-    if(WEXITSTATUS(status) == 0) {
-        printf("[PROCESS %d] exited with no errors! \n", getpid());
+        if(WEXITSTATUS(status) == 0) {
+            printf("[PROCESS %d] exited with no errors! \n", getpid());
         }
-    else {
-        printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
-        exit(WEXITSTATUS(status));
+        else
+        {
+            printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+            exit(WEXITSTATUS(status));
         }
     }
 

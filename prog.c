@@ -5,10 +5,10 @@
 int main(){
     FILE *fp;
     fp = fopen("output.txt", "w");
-    fprintf(fp, "Process run successfully! \n");
+    fprintf(fp, "[LIVE] Process run successfully!\n");
     fclose(fp);
 
-    printf("[OUTPUT] Process run successfully!\n");
+    printf("[LIVE OUTPUT] Process run successfully!\n");
 
     return 0;
 }
