@@ -4,6 +4,7 @@
 
 int main(){
     FILE *fp;
+
     fp = fopen("output.txt", "w");
     fprintf(fp, "[LIVE] Process ran successfully!\n");
     fclose(fp);
