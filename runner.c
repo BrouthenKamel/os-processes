@@ -9,7 +9,7 @@
 #define FILE_NAME_SIZE 64
 
 int main(int argc, char *argv[]){
-    // Processes states and errors variables
+    // ? Processes states and errors variables
     int p1, p2, p3, err, status;
 
     // Commands variables
@@ -17,6 +17,23 @@ int main(int argc, char *argv[]){
     char program_name[FILE_NAME_SIZE] = "" ;
     char object_module_name[FILE_NAME_SIZE] = "" ;
     char execution_name[FILE_NAME_SIZE] = "./" ;
+
+    // ? Arguments verifications 
+    // We only need the file name (without the .c or .o)
+    if(argc != 2)
+    {
+        if(argc == 1) 
+        {
+            printf("You missed the file name, please enter a valid file name");
+            exit(1);
+        }
+        else
+        {
+            printf("Please enter a valid number of arguments (1), the file name to be executed");
+            exit(1);
+        }
+    }
+
 
     // file_name
     strcpy(file_name, argv[1]);
@@ -34,9 +51,10 @@ int main(int argc, char *argv[]){
 
     printf("Input file: %s \n", argv[1]);
 
-    /** Creating processes **/
 
-    // 1st Child Creation 
+    /**  Creating processes **/
+
+    // ? 1st Child Creation 
     p1 = fork();
 
     //1st Child Operation --> Making the payload ready to create prog.o
@@ -48,9 +66,22 @@ int main(int argc, char *argv[]){
     }
 
     // Waiting for the completation of the 1st process without errors
-    p1 = wait(NULL);
+    // ! This conditional statement treats the compilation errors
+    p1 = wait(&status);
 
-    // 2nd Child Creation 
+    if(WIFEXITED(status)){
+    if(WEXITSTATUS(status) == 0) {
+        printf("[PROCESS %d] exited with no errors! \n", getpid());
+    }
+    else 
+    {
+        printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+        exit(1);
+    }
+    }
+
+
+    // ? 2nd Child Creation 
     p2 = fork();
 
     //2nd Child Operation --> Making the payload ready to compile prog.o into an executable
@@ -61,14 +92,25 @@ int main(int argc, char *argv[]){
         exit(err);
     }
 
-    // Waiting for the completation of the 1st process without errors
-    p2 = wait(NULL);
+    // Waiting for the completation of the 2nd process without errors
+    //! This conditional statement treats the execution errors
+    p2 = wait(&status);
+    
+    if(WIFEXITED(status)){
+    if(WEXITSTATUS(status) == 0) {
+        printf("[PROCESS %d] exited with no errors! \n", getpid());
+        }
+    else {
+        printf("[PROCESS %d] exited with status: %d \n", getpid(), WEXITSTATUS(status));
+        exit(WEXITSTATUS(status));
+        }
+    }
 
     // 3rd Child Creation 
     p3 = fork();
 
-    // 3rd Child Operation --> setting the 3rd Process to execute the compiled program
-    //The Excepted result is : a text file with a success message
+    // ? 3rd Child Operation --> setting the 3rd Process to execute the compiled program
+    //! The Excepted result is : a text file with a success message
     // This proof of concept is useful because it show a concreat proof of the successed operation
     if (p3 == 0){
         printf("[PROCESS %d] run: ./%s \n", getpid(), file_name);
